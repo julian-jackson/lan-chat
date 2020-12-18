@@ -2,11 +2,15 @@ import socket
 from threading import *
 
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-host = "10.20.28.111"
+bound = False
 port = 8000
-print("IP:", host)
+while not bound:
+    try:
+        serversocket.bind(("", port))
+        bound = True
+    except:
+        port += 1
 print("Port:", port)
-serversocket.bind((host, port))
 
 class client(Thread):
     def __init__(self, socket, address):
@@ -19,8 +23,9 @@ class client(Thread):
         while 1:
             user_id = self.sock.recv(1024).decode()
             user_message = self.sock.recv(1024).decode()
-            print(user_id+":"+user_message)
-            self.sock.send(b"Recived")
+            print(user_id+" -> "+user_message)
+            self.sock.send(b"Received")
+
 
 serversocket.listen(5)
 print ("Server Started\n")
